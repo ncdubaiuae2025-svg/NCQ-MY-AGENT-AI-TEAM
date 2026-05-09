@@ -1,0 +1,32 @@
+{
+    "pgsql.serverGroups": [
+        {
+            "id": "6FD23407-3A70-426E-8911-69BA11A5EE4C",
+            "name": "Servers"
+        }
+    ],
+    "pgsql.connections": [
+        {
+            "id": "C5233C1A-67A2-4B49-8025-BD25A21685A8",
+            "groupId": "6FD23407-3A70-426E-8911-69BA11A5EE4C",
+            "authenticationType": "SqlLogin",
+            "connectTimeout": 15,
+            "applicationName": "vscode-pgsql",
+            "clientEncoding": "utf8",
+            "sslmode": "prefer",
+            "sshSavePassword": true,
+            "savePassword": true,
+            "sslRootCertMode": "none",
+            "server": "localhost",
+            "user": "postgres",
+            "password": "",
+            "database": "clan_platform",
+            "profileName": "localhost, postgres (postgres)",
+            "expiresOn": 0,
+            "sshPassword": "",
+            "profileSource": 0,
+            "displayName": "localhost, postgres (postgres)",
+            "port": "5432"
+        }
+    ]
+}

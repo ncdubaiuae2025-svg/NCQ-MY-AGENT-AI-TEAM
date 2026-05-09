@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة القبيلة - إدارة الأفراد والأنساب</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+            border-right: 4px solid #1e88e5;
+            padding-right: 15px;
+            color: #1e88e5;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1 1 200px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #1e88e5;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #0b5e7e;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: right;
+        }
+
+        th {
+            background: #e9ecef;
+        }
+
+        .family-tree {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+            white-space: pre;
+            margin-top: 10px;
+        }
+
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>➕ إضافة شخص جديد</h2>
+            <form id="personForm">
+                <div class="form-row">
+                    <div class="form-group"><label>الاسم الأول *</label><input type="text" id="first_name" required>
+                    </div>
+                    <div class="form-group"><label>اسم الأب *</label><input type="text" id="father_name" required></div>
+                    <div class="form-group"><label>اسم الأم *</label><input type="text" id="mother_name" required></div>
+                    <div class="form-group"><label>الرقم الوطني *</label><input type="text" id="national_id" required>
+                    </div>
+                    <div class="form-group"><label>تاريخ الميلاد</label><input type="date" id="birth_date"></div>
+                    <div class="form-group"><label>مكان الولادة</label><input type="text" id="birth_place"></div>
+                    <div class="form-group"><label>المدينة</label><input type="text" id="city"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>الأب (اختر من القائمة)</label>
+                        <select id="father_id">
+                            <option value="">-- لا يوجد --</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>الأم (اختر من القائمة)</label>
+                        <select id="mother_id">
+                            <option value="">-- لا يوجد --</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>الرصيد المبدئي</label><input type="number" step="0.01"
+                            id="wallet_balance" value="0"></div>
+                </div>
+                <button type="submit">💾 تسجيل الشخص</button>
+                <button type="button" id="refreshBtn">🔄 تحديث القائمة</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>📋 قائمة الأشخاص المسجلين</h2>
+            <div style="overflow-x: auto;">
+                <table id="personsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم الوطني</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>مكان الولادة</th>
+                            <th>المدينة</th>
+                            <th>الأب (ID)</th>
+                            <th>الأم (ID)</th>
+                            <th>الرصيد</th>
+                            <th>حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🌳 شجرة العائلة (حتى 5 أجيال)</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>اختر الشخص لعرض شجرته:</label>
+                    <select id="tree_person_id"></select>
+                    <button id="showTreeBtn">عرض الشجرة</button>
+                </div>
+            </div>
+            <div id="treeDisplay" class="family-tree" style="display:none;">
+                <pre id="treeOutput"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // دمج الأسماء الثلاثة في اسم كامل
+        function buildFullName() {
+            const first = document.getElementById('first_name').value.trim();
+            const father = document.getElementById('father_name').value.trim();
+            const mother = document.getElementById('mother_name').value.trim();
+            return `${first} ${father} ${mother}`;
+        }
+
+        // جلب جميع الأشخاص من الخادم
+        async function loadPersons() {
+            try {
+                const res = await fetch('/api/persons');
+                const persons = await res.json();
+                const tbody = document.querySelector('#personsTable tbody');
+                tbody.innerHTML = '';
+                const fatherSelect = document.getElementById('father_id');
+                const motherSelect = document.getElementById('mother_id');
+                const treeSelect = document.getElementById('tree_person_id');
+                fatherSelect.innerHTML = '<option value="">-- لا يوجد --</option>';
+                motherSelect.innerHTML = '<option value="">-- لا يوجد --</option>';
+                treeSelect.innerHTML = '<option value="">اختر شخصاً</option>';
+                persons.forEach(p => {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).innerText = p.id;
+                    row.insertCell(1).innerText = p.full_name;
+                    row.insertCell(2).innerText = p.national_id;
+                    row.insertCell(3).innerText = p.birth_date || '—';
+                    row.insertCell(4).innerText = p.birth_place || '—';
+                    row.insertCell(5).innerText = p.city || '—';
+                    row.insertCell(6).innerText = p.father_id || '—';
+                    row.insertCell(7).innerText = p.mother_id || '—';
+                    row.insertCell(8).innerText = p.wallet_balance;
+                    const delBtn = document.createElement('button');
+                    delBtn.innerText = '🗑️ حذف';
+                    delBtn.className = 'delete-btn';
+                    delBtn.onclick = () => deletePerson(p.id);
+                    const cell = row.insertCell(9);
+                    cell.appendChild(delBtn);
+
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = `${p.full_name} (ID:${p.id})`;
+                    fatherSelect.appendChild(opt.cloneNode(true));
+                    motherSelect.appendChild(opt.cloneNode(true));
+                    treeSelect.appendChild(opt);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function deletePerson(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا الشخص؟')) return;
+            try {
+                const res = await fetch(`/api/persons/${id}`, { method: 'DELETE' });
+                if (res.ok) loadPersons();
+                else alert('فشل الحذف');
+            } catch (err) {
+                alert('خطأ في الاتصال');
+            }
+        }
+
+        // إضافة شخص جديد
+        document.getElementById('personForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const full_name = buildFullName();
+            if (!full_name) {
+                alert('الرجاء ملء الاسم الأول واسم الأب واسم الأم');
+                return;
+            }
+            const payload = {
+                full_name: full_name,
+                national_id: document.getElementById('national_id').value,
+                birth_date: document.getElementById('birth_date').value || null,
+                birth_place: document.getElementById('birth_place').value || null,
+                city: document.getElementById('city').value || null,
+                father_id: document.getElementById('father_id').value || null,
+                mother_id: document.getElementById('mother_id').value || null,
+                wallet_balance: parseFloat(document.getElementById('wallet_balance').value) || 0
+            };
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('تمت إضافة الشخص بنجاح!');
+                    loadPersons();
+                    document.getElementById('personForm').reset();
+                } else {
+                    alert('خطأ: ' + (data.error || 'حدث خطأ'));
+                }
+            } catch (err) {
+                alert('فشل الاتصال بالخادم');
+            }
+        });
+
+        // عرض شجرة العائلة
+        document.getElementById('showTreeBtn').addEventListener('click', async () => {
+            const personId = document.getElementById('tree_person_id').value;
+            if (!personId) {
+                alert('اختر شخصاً أولاً');
+                return;
+            }
+            try {
+                const res = await fetch(`/api/family-tree/${personId}`);
+                const tree = await res.json();
+                let output = '';
+                for (let node of tree) {
+                    output += '  '.repeat(node.gen) + '└─ ' + node.full_name + ' (جيل ' + node.gen + ')\n';
+                }
+                document.getElementById('treeOutput').innerText = output || 'لا يوجد أجداد';
+                document.getElementById('treeDisplay').style.display = 'block';
+            } catch (err) {
+                alert('فشل جلب الشجرة');
+            }
+        });
+
+        document.getElementById('refreshBtn').addEventListener('click', loadPersons);
+        loadPersons();
+    </script>
+</body>
+
+</html>
