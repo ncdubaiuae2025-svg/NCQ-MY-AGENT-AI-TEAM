@@ -4,10 +4,18 @@ import os
 import json
 from datetime import datetime
 
-# إضافة المجلد الرئيسي إلى مسار بايثون
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# إضافة مجلد المشروع الرئيسي إلى sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 
-from agent_core import AgentEngine
+# الآن يمكننا استيراد agent_core
+try:
+    from agent_core import AgentEngine
+except ModuleNotFoundError as e:
+    st.error(f"خطأ في الاستيراد: {e}. تأكد من وجود ملف agent_core.py في المجلد الرئيسي.")
+    st.stop()
 
 st.set_page_config(page_title="NCQ Agent Engine - لوحة التحكم", layout="wide")
 st.title("🧠 NCQ - محرك الوكلاء الذكي")
