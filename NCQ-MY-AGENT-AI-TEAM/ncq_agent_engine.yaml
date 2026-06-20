@@ -1,0 +1,76 @@
+version: 1.0
+env:
+  AI_API_KEY: ${OPENROUTER_API_KEY}
+  AI_MODEL: "openai/gpt-4-turbo"
+  NCQ_API_URL: ${NCQ_API_URL}
+  NCQ_API_TOKEN: ${NCQ_API_TOKEN}
+agents:
+  scout:
+    enabled: true
+    schedule: "0 */6 * * *"
+    sources: ["github-issues", "web-forms"]
+  analyst:
+    enabled: true
+    schedule: "0 */4 * * *"
+    min_confidence: 0.7
+  executor:
+    enabled: true
+    schedule: null
+    triggers: ["task-ready"]
+  guardian:
+    enabled: true
+    schedule: "*/15 * * * *"
+    max_issues_per_skill: 5
+  researcher:
+    enabled: true
+    schedule: "0 */8 * * *"
+    sources: ["web", "github", "rss"]
+  writer:
+    enabled: true
+    schedule: "0 9 * * *"
+    tone: "formal"
+    formats: ["markdown", "pdf"]
+  ops:
+    enabled: true
+    schedule: "0 */6 * * *"
+    auto_update_deps: false
+  accountant:
+    enabled: true
+    schedule: "0 */2 * * *"
+    default_currency: "SAR"
+  arbitrator:
+    enabled: true
+    schedule: "0 */4 * * *"
+    verdict_deadline_days: 30
+chains:
+  create-person-chain:
+    steps:
+      - agent: scout
+        skill: gather-requirements
+      - agent: analyst
+        skill: validate-person-data
+      - agent: executor
+        skill: create-person
+      - agent: guardian
+        skill: monitor-depths
+      - agent: writer
+        skill: generate-report
+    on_failure: stop
+    max_retries: 2
+  monthly-reconciliation:
+    schedule: "0 0 1 * *"
+    steps:
+      - agent: accountant
+        skill: reconcile-accounts
+      - agent: accountant
+        skill: generate-trial-balance
+      - agent: writer
+        skill: write-financial-report
+mesh:
+  max_history: 100
+  ttl_hours: 48
+rules:
+  - "All data changes must go through NCQ APIs"
+  - "Guardian can veto any decision if it violates security"
+  - "Maximum 3 auto-repairs per hour"
+  - "Every financial transaction must be posted to the general ledger within 24 hours"

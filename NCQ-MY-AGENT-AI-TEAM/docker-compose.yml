@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  ncq-agent-engine:
+    build: .
+    container_name: ncq-agent-engine
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - NCQ_API_URL=${NCQ_API_URL}
+      - NCQ_API_TOKEN=${NCQ_API_TOKEN}
+      - AI_MODEL=${AI_MODEL}
+    volumes:
+      - ./:/app
+    command: python agent_core.py
+    restart: unless-stopped

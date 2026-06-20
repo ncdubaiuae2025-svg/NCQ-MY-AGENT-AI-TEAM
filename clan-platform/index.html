@@ -4,324 +4,619 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة القبيلة - إدارة الأفراد والأنساب</title>
+    <title>منصة القبيلة - النظام المتكامل</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             background: #f0f2f5;
             margin: 0;
             padding: 20px;
+            color: #1e2a3e;
         }
 
         .container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c2c, #2a5a3a);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header p {
+            margin: 8px 0 0;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #e9ecef;
+            border-bottom: 1px solid #ced4da;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #2c3e50;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            background: white;
+            border-bottom-color: #2a5a3a;
+            color: #2a5a3a;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 25px 30px;
+            animation: fade 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .card {
-            background: white;
-            border-radius: 12px;
+            background: #f8f9fa;
+            border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
             margin-bottom: 20px;
         }
 
-        h2 {
-            margin-top: 0;
-            border-right: 4px solid #1e88e5;
-            padding-right: 15px;
-            color: #1e88e5;
-        }
-
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            flex: 1 1 200px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #2c3e50;
-        }
-
         input,
-        select {
+        select,
+        textarea {
             width: 100%;
-            padding: 8px 10px;
+            padding: 10px 12px;
             border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2a5a3a;
+            box-shadow: 0 0 0 2px rgba(42, 90, 58, 0.2);
         }
 
         button {
-            background: #1e88e5;
+            background: #2a5a3a;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 10px 18px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 1rem;
+            font-weight: bold;
+            transition: 0.2s;
             margin-left: 10px;
-            margin-top: 10px;
+            margin-bottom: 8px;
         }
 
         button:hover {
-            background: #0b5e7e;
+            background: #1e3c2c;
+            transform: scale(0.98);
         }
 
-        .delete-btn {
-            background: #e74c3c;
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #2a5a3a;
+            color: #2a5a3a;
         }
 
-        .delete-btn:hover {
-            background: #c0392b;
+        .btn-outline:hover {
+            background: #2a5a3a;
+            color: white;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
         }
 
         th,
         td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px 8px;
+            border-bottom: 1px solid #ddd;
             text-align: right;
         }
 
         th {
-            background: #e9ecef;
+            background: #e2e6e9;
         }
 
-        .family-tree {
-            background: #282c34;
-            color: #abb2bf;
-            padding: 15px;
-            border-radius: 8px;
+        .tree-container {
+            background: #fef9e6;
+            padding: 20px;
+            border-radius: 24px;
             overflow-x: auto;
-            font-family: monospace;
-            white-space: pre;
-            margin-top: 10px;
         }
 
-        pre {
-            background: #1e1e1e;
+        .family-tree ul {
+            padding-right: 20px;
+            list-style: none;
+            position: relative;
+        }
+
+        .family-tree li {
+            position: relative;
+            margin-bottom: 12px;
+            padding-right: 20px;
+        }
+
+        .family-tree .person-node {
+            background: #fff3e0;
+            border-right: 4px solid #b97f44;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 4px 0;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .person-node:hover {
+            background: #ffe0b5;
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            background: #ccc;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-right: 8px;
+        }
+
+        .alive {
+            background: #bada77;
+        }
+
+        .deceased {
+            background: #d9534f;
+            color: white;
+        }
+
+        .error {
+            color: #c7254e;
+            background: #f9f2f4;
             padding: 10px;
-            border-radius: 6px;
-            overflow-x: auto;
+            border-radius: 12px;
+        }
+
+        .success {
+            color: #3c763d;
+            background: #dff0d8;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 700px) {
+            .tab-btn {
+                padding: 10px 14px;
+                font-size: 0.8rem;
+            }
+
+            .container {
+                margin: 0;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="card">
-            <h2>➕ إضافة شخص جديد</h2>
-            <form id="personForm">
-                <div class="form-row">
-                    <div class="form-group"><label>الاسم الأول *</label><input type="text" id="first_name" required>
-                    </div>
-                    <div class="form-group"><label>اسم الأب *</label><input type="text" id="father_name" required></div>
-                    <div class="form-group"><label>اسم الأم *</label><input type="text" id="mother_name" required></div>
-                    <div class="form-group"><label>الرقم الوطني *</label><input type="text" id="national_id" required>
-                    </div>
-                    <div class="form-group"><label>تاريخ الميلاد</label><input type="date" id="birth_date"></div>
-                    <div class="form-group"><label>مكان الولادة</label><input type="text" id="birth_place"></div>
-                    <div class="form-group"><label>المدينة</label><input type="text" id="city"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>الأب (اختر من القائمة)</label>
-                        <select id="father_id">
-                            <option value="">-- لا يوجد --</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>الأم (اختر من القائمة)</label>
-                        <select id="mother_id">
-                            <option value="">-- لا يوجد --</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>الرصيد المبدئي</label><input type="number" step="0.01"
-                            id="wallet_balance" value="0"></div>
-                </div>
-                <button type="submit">💾 تسجيل الشخص</button>
-                <button type="button" id="refreshBtn">🔄 تحديث القائمة</button>
-            </form>
+        <header>
+            <h1>🏛️ منصة القبيلة</h1>
+            <p>التوثيق القبلي | شجرة العائلة | الميراث | الحوكمة</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="people">👥 الأفراد</button>
+            <button class="tab-btn" data-tab="tree">🌳 شجرة العائلة</button>
+            <button class="tab-btn" data-tab="assets">🏦 الأصول & العقارات</button>
+            <button class="tab-btn" data-tab="wallet">💰 المحفظة والمعاملات</button>
         </div>
 
-        <div class="card">
-            <h2>📋 قائمة الأشخاص المسجلين</h2>
-            <div style="overflow-x: auto;">
-                <table id="personsTable">
+        <!-- تبويب الأفراد -->
+        <div id="people" class="tab-content active">
+            <div class="card">
+                <h3>➕ إضافة فرد جديد</h3>
+                <div class="form-grid">
+                    <input type="text" id="fullName" placeholder="الاسم الكامل" autocomplete="off">
+                    <input type="text" id="nationalId" placeholder="الرقم الوطني">
+                    <input type="text" id="fatherName" placeholder="اسم الأب">
+                    <input type="text" id="motherName" placeholder="اسم الأم">
+                    <input type="date" id="birthDate">
+                    <input type="text" id="city" placeholder="المدينة">
+                    <select id="gender">
+                        <option value="">الجنس</option>
+                        <option value="ذكر">ذكر</option>
+                        <option value="أنثى">أنثى</option>
+                    </select>
+                    <select id="religion">
+                        <option value="">الديانة</option>
+                        <option value="مسلم">مسلم</option>
+                        <option value="مسيحي">مسيحي</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <button id="addPersonBtn">💾 إضافة الشخص</button>
+            </div>
+            <div class="card">
+                <h3>📋 قائمة الأفراد</h3>
+                <div class="flex-between">
+                    <button id="refreshPersonsBtn" class="btn-outline">🔄 تحديث</button>
+                    <input type="text" id="searchPerson" placeholder="بحث بالاسم..." style="width:200px;">
+                </div>
+                <div style="overflow-x: auto; margin-top: 15px;">
+                    <table id="personsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>الاسم الكامل</th>
+                                <th>الأب</th>
+                                <th>الأم</th>
+                                <th>تاريخ الميلاد</th>
+                                <th>الجنس</th>
+                                <th>الديانة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personsTableBody">
+                            <tr>
+                                <td colspan="8">جاري التحميل...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- تبويب شجرة العائلة -->
+        <div id="tree" class="tab-content">
+            <div class="card">
+                <h3>🔍 اختر الشخص لعرض شجرة عائلته</h3>
+                <select id="treePersonSelect" style="width: 70%;"></select>
+                <button id="loadTreeBtn">عرض الشجرة</button>
+            </div>
+            <div class="tree-container" id="familyTreeContainer">
+                <p>اضغط على "عرض الشجرة" لرؤية العلاقات العائلية (نصية ورسومية).</p>
+            </div>
+        </div>
+
+        <!-- تبويب الأصول والعقارات -->
+        <div id="assets" class="tab-content">
+            <div class="card">
+                <h3>🏡 إضافة أصل جديد</h3>
+                <div class="form-grid">
+                    <input type="text" id="assetDesc" placeholder="وصف الأصل (مثال: فيلا في الرياض)">
+                    <select id="assetType">
+                        <option value="عقار">عقار</option>
+                        <option value="سيارة">سيارة</option>
+                        <option value="سهم">سهم</option>
+                        <option value="ذهب">ذهب</option>
+                        <option value="نقد">نقد</option>
+                    </select>
+                    <input type="number" id="assetValue" placeholder="القيمة (NCQ)">
+                    <select id="ownerPersonId"></select>
+                </div>
+                <button id="addAssetBtn">➕ إضافة أصل</button>
+            </div>
+            <div class="card">
+                <h3>📜 الأصول المسجلة</h3>
+                <button id="refreshAssetsBtn" class="btn-outline">تحديث</button>
+                <table id="assetsTable">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>الاسم الكامل</th>
-                            <th>الرقم الوطني</th>
-                            <th>تاريخ الميلاد</th>
-                            <th>مكان الولادة</th>
-                            <th>المدينة</th>
-                            <th>الأب (ID)</th>
-                            <th>الأم (ID)</th>
-                            <th>الرصيد</th>
-                            <th>حذف</th>
+                            <th>الوصف</th>
+                            <th>النوع</th>
+                            <th>القيمة</th>
+                            <th>المالك</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <tr>
+                            <td colspan="5">لا توجد أصول</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="card">
-            <h2>🌳 شجرة العائلة (حتى 5 أجيال)</h2>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>اختر الشخص لعرض شجرته:</label>
-                    <select id="tree_person_id"></select>
-                    <button id="showTreeBtn">عرض الشجرة</button>
-                </div>
+        <!-- تبويب المحفظة -->
+        <div id="wallet" class="tab-content">
+            <div class="card">
+                <h3>💎 أرصدة المحافظ</h3>
+                <button id="refreshWalletsBtn">تحديث الأرصدة</button>
+                <table id="walletsTable">
+                    <thead>
+                        <tr>
+                            <th>الشخص</th>
+                            <th>الرصيد (NCQ)</th>
+                            <th>نوع العملة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="3">تحميل...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div id="treeDisplay" class="family-tree" style="display:none;">
-                <pre id="treeOutput"></pre>
+            <div class="card">
+                <h3>💸 تحويل رصيد</h3>
+                <select id="fromPerson"></select> → <select id="toPerson"></select>
+                <input type="number" id="transferAmount" placeholder="المبلغ">
+                <button id="transferBtn">تحويل</button>
+                <div id="transferMsg"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // دمج الأسماء الثلاثة في اسم كامل
-        function buildFullName() {
-            const first = document.getElementById('first_name').value.trim();
-            const father = document.getElementById('father_name').value.trim();
-            const mother = document.getElementById('mother_name').value.trim();
-            return `${first} ${father} ${mother}`;
+        const API_BASE = 'http://localhost:3000/api';  // تأكد من تطابق المسارات مع الـ backend
+        let personsList = [];
+
+        // وظائف مساعدة للـ fetch مع أخطاء
+        async function fetchAPI(url, options = {}) {
+            try {
+                const res = await fetch(url, { ...options, headers: { 'Content-Type': 'application/json', ...options.headers } });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return await res.json();
+            } catch (err) {
+                console.error('API error:', err);
+                return null;
+            }
         }
 
-        // جلب جميع الأشخاص من الخادم
+        // تحميل قائمة الأفراد وملء الخيارات
         async function loadPersons() {
-            try {
-                const res = await fetch('/api/persons');
-                const persons = await res.json();
-                const tbody = document.querySelector('#personsTable tbody');
-                tbody.innerHTML = '';
-                const fatherSelect = document.getElementById('father_id');
-                const motherSelect = document.getElementById('mother_id');
-                const treeSelect = document.getElementById('tree_person_id');
-                fatherSelect.innerHTML = '<option value="">-- لا يوجد --</option>';
-                motherSelect.innerHTML = '<option value="">-- لا يوجد --</option>';
-                treeSelect.innerHTML = '<option value="">اختر شخصاً</option>';
-                persons.forEach(p => {
-                    const row = tbody.insertRow();
-                    row.insertCell(0).innerText = p.id;
-                    row.insertCell(1).innerText = p.full_name;
-                    row.insertCell(2).innerText = p.national_id;
-                    row.insertCell(3).innerText = p.birth_date || '—';
-                    row.insertCell(4).innerText = p.birth_place || '—';
-                    row.insertCell(5).innerText = p.city || '—';
-                    row.insertCell(6).innerText = p.father_id || '—';
-                    row.insertCell(7).innerText = p.mother_id || '—';
-                    row.insertCell(8).innerText = p.wallet_balance;
-                    const delBtn = document.createElement('button');
-                    delBtn.innerText = '🗑️ حذف';
-                    delBtn.className = 'delete-btn';
-                    delBtn.onclick = () => deletePerson(p.id);
-                    const cell = row.insertCell(9);
-                    cell.appendChild(delBtn);
-
-                    const opt = document.createElement('option');
-                    opt.value = p.id;
-                    opt.textContent = `${p.full_name} (ID:${p.id})`;
-                    fatherSelect.appendChild(opt.cloneNode(true));
-                    motherSelect.appendChild(opt.cloneNode(true));
-                    treeSelect.appendChild(opt);
-                });
-            } catch (err) {
-                console.error(err);
+            const data = await fetchAPI(`${API_BASE}/persons`);
+            if (data && Array.isArray(data)) {
+                personsList = data;
+                renderPersonsTable(data);
+                fillPersonSelects(data);
+            } else {
+                document.getElementById('personsTableBody').innerHTML = '<tr><td colspan="8">فشل تحميل البيانات</td></tr>';
             }
         }
 
-        async function deletePerson(id) {
-            if (!confirm('هل أنت متأكد من حذف هذا الشخص؟')) return;
-            try {
-                const res = await fetch(`/api/persons/${id}`, { method: 'DELETE' });
-                if (res.ok) loadPersons();
-                else alert('فشل الحذف');
-            } catch (err) {
-                alert('خطأ في الاتصال');
-            }
-        }
-
-        // إضافة شخص جديد
-        document.getElementById('personForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const full_name = buildFullName();
-            if (!full_name) {
-                alert('الرجاء ملء الاسم الأول واسم الأب واسم الأم');
+        function renderPersonsTable(persons) {
+            const tbody = document.getElementById('personsTableBody');
+            if (!persons.length) {
+                tbody.innerHTML = '<tr><td colspan="8">لا يوجد أفراد</td></tr>';
                 return;
             }
+            tbody.innerHTML = persons.map(p => `
+            <tr>
+                <td>${p.id}</td>
+                <td>${p.full_name || p.fullName || ''}</td>
+                <td>${p.father_name || ''}</td>
+                <td>${p.mother_name || ''}</td>
+                <td>${p.birth_date || ''}</td>
+                <td>${p.gender || ''}</td>
+                <td>${p.religion || ''}</td>
+                <td>
+                    <button onclick="deletePerson(${p.id})">🗑️ حذف</button>
+                    <button onclick="editPerson(${p.id})">✏️ تعديل</button>
+                </td>
+            </tr>
+        `).join('');
+        }
+
+        async function addPerson() {
             const payload = {
-                full_name: full_name,
-                national_id: document.getElementById('national_id').value,
-                birth_date: document.getElementById('birth_date').value || null,
-                birth_place: document.getElementById('birth_place').value || null,
-                city: document.getElementById('city').value || null,
-                father_id: document.getElementById('father_id').value || null,
-                mother_id: document.getElementById('mother_id').value || null,
-                wallet_balance: parseFloat(document.getElementById('wallet_balance').value) || 0
+                full_name: document.getElementById('fullName').value,
+                national_id: document.getElementById('nationalId').value,
+                father_name: document.getElementById('fatherName').value,
+                mother_name: document.getElementById('motherName').value,
+                birth_date: document.getElementById('birthDate').value,
+                city: document.getElementById('city').value,
+                gender: document.getElementById('gender').value,
+                religion: document.getElementById('religion').value
             };
-            try {
-                const res = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (data.success) {
-                    alert('تمت إضافة الشخص بنجاح!');
-                    loadPersons();
-                    document.getElementById('personForm').reset();
-                } else {
-                    alert('خطأ: ' + (data.error || 'حدث خطأ'));
-                }
-            } catch (err) {
-                alert('فشل الاتصال بالخادم');
-            }
-        });
+            if (!payload.full_name) return alert("الاسم الكامل مطلوب");
+            const result = await fetchAPI(`${API_BASE}/persons`, { method: 'POST', body: JSON.stringify(payload) });
+            if (result) {
+                alert("تمت الإضافة بنجاح");
+                loadPersons();
+                document.getElementById('fullName').value = '';
+            } else alert("خطأ في الإضافة");
+        }
 
-        // عرض شجرة العائلة
-        document.getElementById('showTreeBtn').addEventListener('click', async () => {
-            const personId = document.getElementById('tree_person_id').value;
-            if (!personId) {
-                alert('اختر شخصاً أولاً');
+        window.deletePerson = async (id) => {
+            if (!confirm("هل أنت متأكد من الحذف؟")) return;
+            const res = await fetchAPI(`${API_BASE}/persons/${id}`, { method: 'DELETE' });
+            if (res) loadPersons();
+            else alert("فشل الحذف");
+        };
+        window.editPerson = (id) => {
+            const p = personsList.find(x => x.id == id);
+            if (!p) return;
+            const newName = prompt("تعديل الاسم الكامل:", p.full_name || p.fullName);
+            if (newName) {
+                fetchAPI(`${API_BASE}/persons/${id}`, { method: 'PUT', body: JSON.stringify({ full_name: newName }) })
+                    .then(() => loadPersons());
+            }
+        };
+
+        function fillPersonSelects(persons) {
+            const selects = ['treePersonSelect', 'ownerPersonId', 'fromPerson', 'toPerson'];
+            selects.forEach(sel => {
+                const el = document.getElementById(sel);
+                if (el) {
+                    el.innerHTML = '<option value="">اختر شخص</option>' + persons.map(p => `<option value="${p.id}">${p.full_name || p.fullName}</option>`).join('');
+                }
+            });
+        }
+
+        // تحميل شجرة العائلة (نصية ورسومية)
+        async function loadFamilyTree() {
+            const personId = document.getElementById('treePersonSelect').value;
+            if (!personId) return alert("اختر شخصاً أولاً");
+            const treeData = await fetchAPI(`${API_BASE}/family-tree/${personId}`);
+            const container = document.getElementById('familyTreeContainer');
+            if (!treeData) {
+                container.innerHTML = '<div class="error">تعذر تحميل الشجرة</div>';
                 return;
             }
-            try {
-                const res = await fetch(`/api/family-tree/${personId}`);
-                const tree = await res.json();
-                let output = '';
-                for (let node of tree) {
-                    output += '  '.repeat(node.gen) + '└─ ' + node.full_name + ' (جيل ' + node.gen + ')\n';
+            // عرض نصي هرمي بسيط
+            function buildTreeHtml(node, level = 0) {
+                if (!node) return '';
+                let html = `<div class="person-node" style="margin-right: ${level * 20}px">
+                            <strong>${node.name || node.full_name || '?'}</strong>
+                            <span class="status-badge ${node.is_alive ? 'alive' : 'deceased'}">${node.is_alive ? 'حي' : 'متوفى'}</span>
+                        </div>`;
+                if (node.children && node.children.length) {
+                    html += '<div>' + node.children.map(c => buildTreeHtml(c, level + 1)).join('') + '</div>';
                 }
-                document.getElementById('treeOutput').innerText = output || 'لا يوجد أجداد';
-                document.getElementById('treeDisplay').style.display = 'block';
-            } catch (err) {
-                alert('فشل جلب الشجرة');
+                return html;
             }
+            let htmlVisual = `<h4>🌿 شجرة العائلة (عرض نصي)</h4><div class="family-tree">${buildTreeHtml(treeData)}</div>`;
+            // عرض رسومي إضافي بقائمة متداخلة
+            function renderUl(node) {
+                if (!node) return '';
+                let items = `<li><div class="person-node">${node.name || node.full_name}</div>`;
+                if (node.children && node.children.length) {
+                    items += '<ul>' + node.children.map(ch => renderUl(ch)).join('') + '</ul>';
+                }
+                items += '</li>';
+                return items;
+            }
+            htmlVisual += `<hr><h4>📌 عرض هرمي متشعب</h4><ul class="family-tree" style="list-style:none;">${renderUl(treeData)}</ul>`;
+            container.innerHTML = htmlVisual;
+        }
+
+        // الأصول
+        async function loadAssets() {
+            const assets = await fetchAPI(`${API_BASE}/assets`);
+            const tbody = document.querySelector('#assetsTable tbody');
+            if (!assets || !assets.length) {
+                tbody.innerHTML = '<tr><td colspan="5">لا توجد أصول</td></tr>';
+                return;
+            }
+            tbody.innerHTML = assets.map(a => `
+            <tr>
+                <td>${a.id}</td><td>${a.description}</td><td>${a.type}</td><td>${a.value}</td>
+                <td>${personsList.find(p => p.id == a.owner_person_id)?.full_name || a.owner_person_id}</td>
+            </tr>
+        `).join('');
+        }
+        async function addAsset() {
+            const ownerId = document.getElementById('ownerPersonId').value;
+            if (!ownerId) return alert("اختر المالك");
+            const payload = {
+                description: document.getElementById('assetDesc').value,
+                type: document.getElementById('assetType').value,
+                value: parseFloat(document.getElementById('assetValue').value),
+                owner_person_id: parseInt(ownerId)
+            };
+            const res = await fetchAPI(`${API_BASE}/assets`, { method: 'POST', body: JSON.stringify(payload) });
+            if (res) { alert("تمت إضافة الأصل"); loadAssets(); }
+            else alert("فشل");
+        }
+
+        // المحافظ والتحويل
+        async function loadWallets() {
+            const wallets = await fetchAPI(`${API_BASE}/wallets`);
+            const tbody = document.querySelector('#walletsTable tbody');
+            if (!wallets) { tbody.innerHTML = '<tr><td colspan="3">فشل التحميل</td></tr>'; return; }
+            tbody.innerHTML = wallets.map(w => `
+            <tr><td>${personsList.find(p => p.id == w.person_id)?.full_name || w.person_id}</td>
+            <td>${w.balance_ncq}</td><td>${w.currency_type}</td></tr>
+        `).join('');
+        }
+        async function transfer() {
+            const from = document.getElementById('fromPerson').value;
+            const to = document.getElementById('toPerson').value;
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+            if (!from || !to || !amount) return alert("املأ الحقول");
+            const res = await fetchAPI(`${API_BASE}/transfer`, { method: 'POST', body: JSON.stringify({ from_person_id: from, to_person_id: to, amount }) });
+            document.getElementById('transferMsg').innerText = res ? "تم التحويل بنجاح" : "فشل";
+            loadWallets();
+        }
+
+        // ربط الأحداث
+        document.getElementById('addPersonBtn').onclick = addPerson;
+        document.getElementById('refreshPersonsBtn').onclick = loadPersons;
+        document.getElementById('loadTreeBtn').onclick = loadFamilyTree;
+        document.getElementById('addAssetBtn').onclick = addAsset;
+        document.getElementById('refreshAssetsBtn').onclick = loadAssets;
+        document.getElementById('refreshWalletsBtn').onclick = loadWallets;
+        document.getElementById('transferBtn').onclick = transfer;
+
+        // تبديل التبويبات
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+                tabs.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                if (tabId === 'assets') loadAssets();
+                if (tabId === 'wallet') loadWallets();
+            });
         });
 
-        document.getElementById('refreshBtn').addEventListener('click', loadPersons);
+        // تحميل أولي
         loadPersons();
+        loadWallets();
     </script>
 </body>
 
